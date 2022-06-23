@@ -8,10 +8,10 @@ options = {
 
 OptionParser.new do |opts|
   opts.banner = "Usage: mwb_client.rb [options] tag_query"
-  opts.on "-f", "--format", "Specify output format, XML or JSON.  Defaults to JSON." do |v|
+  opts.on "-f", "--format", "Specify output format, CSV or JSON.  Defaults to JSON." do |v|
     case v
-    when 'xml'
-      options[:format] = :xml
+    when 'csv'
+      options[:format] = :csv
     when 'json'
       options[:format] = :json
     end
