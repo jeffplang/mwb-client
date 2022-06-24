@@ -6,9 +6,9 @@ options = {
   format: :json
 }
 
-OptionParser.new do |opts|
-  opts.banner = "Usage: mwb_client.rb [options] tag_query"
-  opts.on "-f", "--format", "Specify output format, CSV or JSON.  Defaults to JSON." do |v|
+optsparser = OptionParser.new do |opts|
+  opts.banner = "Usage: mwb_client.rb [options] tag"
+  opts.on "-f format", "--format=format", "Specify output format, csv or json.  Defaults to json." do |v|
     case v
     when 'csv'
       options[:format] = :csv
@@ -21,4 +21,11 @@ OptionParser.new do |opts|
     puts opts
     exit
   end
-end.parse!
+end
+
+optsparser.parse!
+
+if ARGV.empty?
+  puts optsparser
+  exit
+end
