@@ -10,7 +10,7 @@ options = {
 }
 
 optsparser = OptionParser.new do |opts|
-  opts.banner = "Usage: client.rb [options] tag\n\nMalwareBazaar API key is not required, but if provided, uses MWB_API_KEY environment variable.  Can be overridden with key speciied with -k\n\n"
+  opts.banner = "Usage: ruby client.rb [options] tag\n\nMalwareBazaar API key is not required, but if provided, uses MWB_API_KEY environment variable.  Can be overridden with key speciied with -k\n\n"
   opts.on "-f format", "--format=format", "Specify output format, csv or json.  Defaults to json" do |format|
     case format
     when 'csv'
