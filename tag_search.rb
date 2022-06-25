@@ -4,7 +4,7 @@ require 'csv'
 
 class TagSearch
   FIELDS       = ["first_seen", "last_seen", "file_type", "md5_hash", "sha256_hash", "tags", "reporter"]
-  ENDPOINT_URL = 'https://mb-api.abuse.ch/api/v1/'
+  ENDPOINT_URI = URI('https://mb-api.abuse.ch/api/v1/')
 
   attr_accessor :options
 
@@ -35,20 +35,31 @@ class TagSearch
 
   def formatted_output(parsed)
     if @options[:format] == :csv
-      parsed.map(&:values).map(&:to_csv)
+      parsed.map(&:values).map(&:to_csv).join
     else
-      parsed.to_json
+      parsed.to_json unless parsed.empty?
     end
   end
 
-  def run!
+  def request
     body = {
-     'query' => 'get_taginfo',
-     'tag' => @tag,
-     'limit' => @options[:limit] || 50
+      'query' => 'get_taginfo',
+      'tag' => @tag,
+      'limit' => @options[:limit]
     }
 
-    resp = Net::HTTP.post_form(URI(ENDPOINT_URL), body)
+    req = Net::HTTP::Post.new(ENDPOINT_URI)
+    req.set_form_data(body)
+
+    req['API-KEY'] = options[:api_key] if @options[:api_key]
+
+    req
+  end
+
+  def run!
+    resp = Net::HTTP.start(ENDPOINT_URI.hostname, ENDPOINT_URI.port, use_ssl: true) do |http|
+      http.request(request)
+    end
 
     parsed = parse_response(resp)
 

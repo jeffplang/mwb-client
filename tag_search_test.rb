@@ -42,7 +42,7 @@ class TestTagSearch < Test::Unit::TestCase
     @query.options[:format] = :csv
     parsed = @query.parse_response(resp)
 
-    correct = ["2022-06-23 09:55:13,2022-06-23 09:55:13,exe,6789,12345,\"foo, bar, baz\",person\n"]
+    correct = "2022-06-23 09:55:13,2022-06-23 09:55:13,exe,6789,12345,\"foo, bar, baz\",person\n"
 
     assert_equal correct, @query.formatted_output(parsed)
   end
@@ -55,5 +55,25 @@ class TestTagSearch < Test::Unit::TestCase
     correct = "[{\"first_seen\":\"2022-06-23 09:55:13\",\"last_seen\":\"2022-06-23 09:55:13\",\"file_type\":\"exe\",\"md5_hash\":\"6789\",\"sha256_hash\":\"12345\",\"tags\":\"foo, bar, baz\",\"reporter\":\"person\"}]"
 
     assert_equal correct, @query.formatted_output(parsed)
+  end
+
+  def test_request_sets_limit_appropriately
+    @query.options[:limit] = 3
+    req = @query.request
+
+    assert_match(/limit=3/, req.body)
+  end
+
+  def test_request_sets_api_key
+    @query.options[:api_key] = 'foobar'
+    req = @query.request
+
+    assert_equal(req['API-KEY'], 'foobar')
+  end
+
+  def test_request_includes_no_api_key_header_by_default
+    req = @query.request
+
+    assert_nil(req['API-KEY'])
   end
 end
